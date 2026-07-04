@@ -526,7 +526,7 @@ footer ul a{font-size:.92rem;transition:.2s}footer ul a:hover{color:#fff}
 <section class="pad stats">
   <div class="container">
     <div class="stats-grid">
-      <div class="stat reveal"><div class="n" data-count="500"></div><p>Floors fitted</p></div>
+      <div class="stat reveal"><div class="n" data-count="1000"><span class="plus">+</span></div><p>Floors fitted</p></div>
       <div class="stat reveal d1"><div class="n" data-count="5"><span class="star"></span></div><p>Star average rating</p></div>
       <div class="stat reveal d2"><div class="n" data-count="100"><span class="plus">%</span></div><p>Home measures free</p></div>
       <div class="stat reveal d3"><div class="n" data-count="10"><span class="plus">+</span></div><p>Years of experience</p></div>
@@ -723,7 +723,7 @@ const cio=new IntersectionObserver((entries)=>{
     let cur=0;const step=Math.max(1,Math.ceil(target/60));
     const tick=()=>{
       cur+=step;if(cur>=target)cur=target;
-      el.childNodes[0].nodeValue=isStar?cur.toFixed(1):cur;
+      el.childNodes[0].nodeValue=isStar?cur.toFixed(1):cur.toLocaleString();
       if(cur<target)requestAnimationFrame(tick);
     };
     // ensure a leading text node exists
