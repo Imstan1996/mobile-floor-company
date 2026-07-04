@@ -378,3 +378,45 @@ footer ul a{font-size:.92rem;transition:.2s}footer ul a:hover{color:#fff}
 .nav-links{gap:.1rem}
 .nav-links a{white-space:nowrap;padding:.5rem .6rem;font-size:.9rem}
 @media(max-width:1180px){.nav-phone{display:none}}
+
+/* ===== Fun micro-animations (v3) ===== */
+.btn{position:relative;overflow:hidden}
+.btn>*{position:relative;z-index:1}
+.btn::after{content:"";position:absolute;top:0;left:-130%;width:55%;height:100%;background:linear-gradient(120deg,transparent,rgba(255,255,255,.4),transparent);transform:skewX(-20deg);pointer-events:none}
+.btn:hover::after{left:140%;transition:left .75s ease}
+
+.hero-cta .btn-red{animation:ctaPulse 2.8s ease-in-out infinite}
+@keyframes ctaPulse{0%,100%{box-shadow:0 10px 24px -10px rgba(209,35,42,.7)}50%{box-shadow:0 14px 34px -6px rgba(209,35,42,.95)}}
+
+.fab a{position:relative}
+.fab .wa::before,.fab .call::before{content:"";position:absolute;inset:0;border-radius:50%;background:inherit;z-index:-1;animation:fabPulse 2.6s ease-out infinite}
+.fab .call::before{animation-delay:1.3s}
+@keyframes fabPulse{0%{transform:scale(1);opacity:.5}70%,100%{transform:scale(1.75);opacity:0}}
+
+.usp-ic{transition:transform .3s ease}
+.usp-card:hover .usp-ic{transform:translateY(-4px) rotate(-5deg)}
+
+.svc-img{transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.svc:hover .svc-img{transform:scale(1.06)}
+.fr-img{transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.feature-row:hover .fr-img{transform:scale(1.03)}
+
+.feature-row.reveal{opacity:1;transform:none;transition:none}
+.feature-row .fr-img,.feature-row .fr-txt{opacity:0;transition:opacity .7s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+.feature-row .fr-img{transform:translateX(-34px)}
+.feature-row.flip .fr-img{transform:translateX(34px)}
+.feature-row .fr-txt{transform:translateX(34px);transition-delay:.08s}
+.feature-row.flip .fr-txt{transform:translateX(-34px)}
+.feature-row.in .fr-img,.feature-row.in .fr-txt{opacity:1;transform:none}
+
+.hero-copy>*,.page-hero .container>*{animation:heroIn .8s cubic-bezier(.2,.7,.2,1) both}
+.hero-copy>*:nth-child(2),.page-hero .container>*:nth-child(2){animation-delay:.12s}
+.hero-copy>*:nth-child(3),.page-hero .container>*:nth-child(3){animation-delay:.22s}
+.hero-copy>*:nth-child(4),.page-hero .container>*:nth-child(4){animation-delay:.32s}
+.hero-copy>*:nth-child(5){animation-delay:.42s}
+@keyframes heroIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .reveal,.feature-row .fr-img,.feature-row .fr-txt,.hero-copy>*,.page-hero .container>*{opacity:1!important;transform:none!important}
+}
