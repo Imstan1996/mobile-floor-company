@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://imstan1996.github.io/mobile-floor-company/sitemap.xml
