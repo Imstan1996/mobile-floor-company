@@ -70,6 +70,7 @@ header.scrolled .logo{color:var(--ink)}
   background:linear-gradient(135deg,var(--blue-500),var(--blue));box-shadow:var(--shadow-sm);
 }
 .logo .mark svg{width:24px;height:24px}
+.logo-img{height:44px;width:auto;display:block;filter:drop-shadow(0 1px 4px rgba(0,0,0,.18))}
 .logo .brand small{display:block;font-size:.62rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;opacity:.7;font-family:'Manrope'}
 .nav-links{display:flex;align-items:center;gap:.35rem}
 .nav-links a{
@@ -328,6 +329,7 @@ footer ul a{font-size:.92rem;transition:.2s}footer ul a:hover{color:#fff}
 }
 @media(max-width:560px){
   .pad{padding:64px 0}
+  .logo-img{height:36px}
   .usp-grid,.services-grid,.steps,.stats-grid,.gallery-grid,.foot-grid,.row2{grid-template-columns:1fr}
   .hero-trust{gap:.9rem}
   .g-item.big{grid-column:span 1;grid-row:span 1}
@@ -340,10 +342,7 @@ footer ul a{font-size:.92rem;transition:.2s}footer ul a:hover{color:#fff}
 <header id="header">
   <div class="container nav">
     <a href="#home" class="logo">
-      <span class="mark">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg>
-      </span>
-      <span class="brand">Mobile Floor Co.<small>Blackpool &amp; Fylde Coast</small></span>
+      <img src="images/logo.png" alt="Mobile Floor Company, Blackpool &amp; Fylde Coast" class="logo-img">
     </a>
     <nav class="nav-links">
       <a href="#services">Services</a>
@@ -638,8 +637,7 @@ footer ul a{font-size:.92rem;transition:.2s}footer ul a:hover{color:#fff}
     <div class="foot-grid">
       <div class="foot-brand">
         <a href="#home" class="logo">
-          <span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg></span>
-          <span class="brand">Mobile Floor Co.<small style="opacity:.6">Blackpool &amp; Fylde Coast</small></span>
+          <img src="images/logo.png" alt="Mobile Floor Company" class="logo-img" style="height:46px">
         </a>
         <p>We bring the flooring store to your door. Carpets, laminate, vinyl, LVT &amp; artificial grass, supplied and professionally fitted across the Fylde Coast.</p>
       </div>
