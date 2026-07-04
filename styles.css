@@ -258,7 +258,7 @@ section{position:relative}
 .contact-wrap{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:start}
 .contact-info h2{color:#fff;font-size:clamp(2rem,3.6vw,2.8rem);margin-bottom:1rem}
 .contact-info p.sub{color:rgba(255,255,255,.85);margin-bottom:2rem;max-width:42ch}
-.ci-item{display:flex;gap:1rem;align-items:center;margin-bottom:1.3rem}
+.ci-item{display:flex;gap:1rem;align-items:flex-start;margin-bottom:1.3rem}
 .ci-ic{width:52px;height:52px;border-radius:14px;background:rgba(255,255,255,.12);display:grid;place-items:center;flex:0 0 auto;border:1px solid rgba(255,255,255,.18)}
 .ci-ic svg{width:24px;height:24px;color:#fff}
 .ci-item small{color:rgba(255,255,255,.7);font-size:.82rem;display:block}
@@ -420,3 +420,8 @@ footer ul a{font-size:.92rem;transition:.2s}footer ul a:hover{color:#fff}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   .reveal,.feature-row .fr-img,.feature-row .fr-txt,.hero-copy>*,.page-hero .container>*{opacity:1!important;transform:none!important}
 }
+
+/* contact item alignment + wrap fix */
+.ci-ic{margin-top:2px}
+.ci-item>div{min-width:0}
+.ci-item b{overflow-wrap:anywhere}
