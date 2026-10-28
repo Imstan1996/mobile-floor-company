@@ -14,8 +14,8 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="stylesheet" href="styles.css?v=4">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": ["LocalBusiness", "HomeAndConstructionBusiness"], "name": "Mobile Floor Company", "image": "https://mobilefloorcompany.co.uk/images/logo.png", "url": "https://mobilefloorcompany.co.uk/", "telephone": "+447711831882", "email": "mobilefloorcompany@gmail.com", "priceRange": "££", "description": "Family-run flooring company supplying and fitting carpets, laminate, LVT, vinyl and artificial grass across Blackpool and the Fylde Coast. We bring samples to your door.", "areaServed": [{"@type": "City", "name": "Blackpool"}, "Lytham", "St Annes", "Fleetwood", "Poulton-le-Fylde", "Cleveleys", "Thornton", "Kirkham", "Fylde Coast"], "address": {"@type": "PostalAddress", "addressLocality": "Blackpool", "addressRegion": "Lancashire", "addressCountry": "GB"}, "geo": {"@type": "GeoCoordinates", "latitude": 53.8142, "longitude": -3.0557}, "sameAs": ["https://www.facebook.com/mobilefloorcompany", "https://www.instagram.com/mobilefloorcompany", "https://www.tiktok.com/@mobilefloorcompany"], "aggregateRating": {"@type": "AggregateRating", "ratingValue": "5.0", "reviewCount": "57"}}</script>
+<link rel="stylesheet" href="styles.css?v=5">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": ["LocalBusiness", "HomeAndConstructionBusiness"], "name": "Mobile Floor Company", "image": "https://mobilefloorcompany.co.uk/images/logo.png", "url": "https://mobilefloorcompany.co.uk/", "telephone": "+447711831882", "email": "mobilefloorcompany@gmail.com", "priceRange": "££", "description": "Family-run flooring company supplying and fitting carpets, laminate, LVT, vinyl and artificial grass across Blackpool and the Fylde Coast. We bring samples to your door.", "areaServed": [{"@type": "City", "name": "Blackpool"}, "Lytham", "St Annes", "Fleetwood", "Poulton-le-Fylde", "Cleveleys", "Thornton", "Kirkham", "Fylde Coast"], "address": {"@type": "PostalAddress", "addressLocality": "Blackpool", "addressRegion": "Lancashire", "addressCountry": "GB"}, "geo": {"@type": "GeoCoordinates", "latitude": 53.8142, "longitude": -3.0557}, "sameAs": ["https://www.facebook.com/mobilefloorcompany", "https://www.instagram.com/mobilefloorcompany", "https://www.tiktok.com/@mobilefloorcompany"], "aggregateRating": {"@type": "AggregateRating", "ratingValue": "5.0", "reviewCount": "64"}}</script>
 </head>
 <body>
 
@@ -224,7 +224,7 @@
         <div>
           <span class="score">5.0</span>
           <span class="stars">★★★★★</span>
-          <small>From 57 Google reviews</small>
+          <small>From 64 Google reviews</small>
         </div>
       </div>
     </div>
@@ -416,6 +416,53 @@ form.addEventListener('submit',async(ev)=>{
   form.style.display='none';
   document.getElementById('formSuccess').classList.add('show');
 });
+
+// live Google reviews: fills the review cards with the newest Google reviews and refreshes the rating badge.
+// The static reviews stay as the fallback when the key is missing, the API fails or JS is off.
+// Needs a browser key restricted to mobilefloorcompany.co.uk/* with Maps JavaScript API + Places API (New) enabled.
+const GMAPS_KEY='AIzaSyDc4TYN7uyJDkGEJaYJuh9YRRvAoW1GS0Q', PLACE_ID='ChIJq2OfWqoPUAgRCJ_amOK8S2Q';
+const fillReviewCard=(card,r)=>{
+  const name=r.authorAttribution?.displayName||'Google reviewer';
+  const stars=Math.round(r.rating||5);
+  const text=r.text.length>320?r.text.slice(0,317).trimEnd()+'…':r.text;
+  card.querySelector('.stars').textContent='★'.repeat(stars)+'☆'.repeat(5-stars);
+  card.querySelector('p').textContent=`“${text}”`;
+  const av=card.querySelector('.av');
+  av.textContent=name.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  if(r.authorAttribution?.photoURI){const img=new Image();img.src=r.authorAttribution.photoURI;img.alt='';img.referrerPolicy='no-referrer';av.replaceChildren(img);}
+  const b=card.querySelector('.who b');
+  b.textContent=name;
+  if(r.authorAttribution?.uri){const a=document.createElement('a');a.href=r.authorAttribution.uri;a.target='_blank';a.rel='noopener';a.textContent=name;b.replaceChildren(a);}
+  card.querySelector('.who small').textContent=`Google review · ${r.relativePublishTimeDescription||'recently'}`;
+};
+const showLiveReviews=(place)=>{
+  // shortcut: Google returns at most 5 reviews, so these are the newest of those 5; full history needs the Business Profile API
+  const reviews=(place.reviews||[]).filter(r=>r.publishTime&&r.text).sort((a,b)=>b.publishTime-a.publishTime);
+  const cards=[...document.querySelectorAll('.rev-grid .rev')];
+  // only cards Google has a review for are replaced; any extra keep their static text
+  reviews.slice(0,cards.length).forEach((r,i)=>fillReviewCard(cards[i],r));
+  if(place.rating)document.querySelector('.google-badge .score').textContent=place.rating.toFixed(1);
+  if(place.userRatingCount)document.querySelector('.google-badge small').textContent=`From ${place.userRatingCount} Google reviews`;
+};
+window.initLiveReview=async()=>{
+  try{
+    const {Place}=await google.maps.importLibrary('places');
+    const place=new Place({id:PLACE_ID});
+    await place.fetchFields({fields:['reviews','rating','userRatingCount']});
+    showLiveReviews(place);
+  }catch(e){console.warn('Live Google review unavailable',e);}
+};
+if(GMAPS_KEY&&PLACE_ID){
+  // load Maps only when the reviews section is close, so it costs nothing for visitors who never scroll there
+  const rio=new IntersectionObserver((entries)=>{
+    if(!entries[0].isIntersecting)return;
+    rio.disconnect();
+    const s=document.createElement('script');
+    s.src=`https://maps.googleapis.com/maps/api/js?key=${GMAPS_KEY}&v=weekly&loading=async&callback=initLiveReview`;
+    s.async=true;document.head.appendChild(s);
+  },{rootMargin:'600px'});
+  rio.observe(document.getElementById('reviews'));
+}
 </script>
 </body>
 </html>
