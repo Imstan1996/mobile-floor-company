@@ -418,51 +418,27 @@ form.addEventListener('submit',async(ev)=>{
 });
 
 // live Google reviews: fills the review cards with the newest Google reviews and refreshes the rating badge.
-// The static reviews stay as the fallback when the key is missing, the API fails or JS is off.
-// Needs a browser key restricted to mobilefloorcompany.co.uk/* with Maps JavaScript API + Places API (New) enabled.
-const GMAPS_KEY='AIzaSyDc4TYN7uyJDkGEJaYJuh9YRRvAoW1GS0Q', PLACE_ID='ChIJq2OfWqoPUAgRCJ_amOK8S2Q';
+// Served by stanworks.co.uk, which checks Google once a week (free); the static reviews stay as the fallback.
 const fillReviewCard=(card,r)=>{
-  const name=r.authorAttribution?.displayName||'Google reviewer';
   const stars=Math.round(r.rating||5);
-  const text=r.text.length>320?r.text.slice(0,317).trimEnd()+'…':r.text;
   card.querySelector('.stars').textContent='★'.repeat(stars)+'☆'.repeat(5-stars);
-  card.querySelector('p').textContent=`“${text}”`;
+  card.querySelector('p').textContent=`“${r.text}”`;
   const av=card.querySelector('.av');
-  av.textContent=name.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
-  if(r.authorAttribution?.photoURI){const img=new Image();img.src=r.authorAttribution.photoURI;img.alt='';img.referrerPolicy='no-referrer';av.replaceChildren(img);}
+  av.textContent=r.name.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  if(r.photo){const img=new Image();img.src=r.photo;img.alt='';img.referrerPolicy='no-referrer';av.replaceChildren(img);}
   const b=card.querySelector('.who b');
-  b.textContent=name;
-  if(r.authorAttribution?.uri){const a=document.createElement('a');a.href=r.authorAttribution.uri;a.target='_blank';a.rel='noopener';a.textContent=name;b.replaceChildren(a);}
-  card.querySelector('.who small').textContent=`Google review · ${r.relativePublishTimeDescription||'recently'}`;
+  b.textContent=r.name;
+  if(r.url){const a=document.createElement('a');a.href=r.url;a.target='_blank';a.rel='noopener';a.textContent=r.name;b.replaceChildren(a);}
+  card.querySelector('.who small').textContent=`Google review · ${r.when||'recently'}`;
 };
-const showLiveReviews=(place)=>{
-  // shortcut: Google returns at most 5 reviews, so these are the newest of those 5; full history needs the Business Profile API
-  const reviews=(place.reviews||[]).filter(r=>r.publishTime&&r.text).sort((a,b)=>b.publishTime-a.publishTime);
+fetch('https://www.stanworks.co.uk/api/reviews?place=mfc').then(r=>r.ok?r.json():null).then(d=>{
+  if(!d?.live)return;
   const cards=[...document.querySelectorAll('.rev-grid .rev')];
   // only cards Google has a review for are replaced; any extra keep their static text
-  reviews.slice(0,cards.length).forEach((r,i)=>fillReviewCard(cards[i],r));
-  if(place.rating)document.querySelector('.google-badge .score').textContent=place.rating.toFixed(1);
-  if(place.userRatingCount)document.querySelector('.google-badge small').textContent=`From ${place.userRatingCount} Google reviews`;
-};
-window.initLiveReview=async()=>{
-  try{
-    const {Place}=await google.maps.importLibrary('places');
-    const place=new Place({id:PLACE_ID});
-    await place.fetchFields({fields:['reviews','rating','userRatingCount']});
-    showLiveReviews(place);
-  }catch(e){console.warn('Live Google review unavailable',e);}
-};
-if(GMAPS_KEY&&PLACE_ID){
-  // load Maps only when the reviews section is close, so it costs nothing for visitors who never scroll there
-  const rio=new IntersectionObserver((entries)=>{
-    if(!entries[0].isIntersecting)return;
-    rio.disconnect();
-    const s=document.createElement('script');
-    s.src=`https://maps.googleapis.com/maps/api/js?key=${GMAPS_KEY}&v=weekly&loading=async&callback=initLiveReview`;
-    s.async=true;document.head.appendChild(s);
-  },{rootMargin:'600px'});
-  rio.observe(document.getElementById('reviews'));
-}
+  d.reviews.slice(0,cards.length).forEach((r,i)=>fillReviewCard(cards[i],r));
+  if(d.rating)document.querySelector('.google-badge .score').textContent=d.rating.toFixed(1);
+  if(d.count)document.querySelector('.google-badge small').textContent=`From ${d.count} Google reviews`;
+}).catch(()=>{});
 </script>
 </body>
 </html>
